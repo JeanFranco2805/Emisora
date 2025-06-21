@@ -10,7 +10,8 @@ from db import db
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/sonero_emisora'
+app.config['SQLALCHEMY_DATABASE_URI'] = ('postgresql://emisora_user:3tOhA7zjcj2qrpgMXcjipNcePrSuEUFl@dpg'
+                                         '-d1b35r3e5dus73e69flg-a.oregon-postgres.render.com/emisora')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['SECRET_KEY'] = 'supersecret'
