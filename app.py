@@ -1,13 +1,12 @@
+from gevent import monkey
+monkey.patch_all()
 import json
-
-#import eventlet
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from backend.song import Programacion
 from frontend.admin.admin import admin_bp
 from main import api
 from db import db
-#eventlet.monkey_patch(all=False, socket=True)
 
 
 app = Flask(__name__)
@@ -22,8 +21,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-socketio = SocketIO(app, cors_allowed_origins="*")
-
+socketio = SocketIO(app, async_mode="gevent",cors_allowed_origins="*")
 
 @app.route('/')
 def index():
