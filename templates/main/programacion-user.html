@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🎧 Programación del Día</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/programacion.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: #fefbd8;
+        }
+
+        .header {
+            background: linear-gradient(to right, #fb8500, #ffb703);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffaa00;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .hora-slot {
+            background: #fff;
+            border: 2px solid #ffcf66;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .hora-slot h3 {
+            margin: 0 0 10px;
+            color: #fb5607;
+        }
+
+        .contenedor-canciones {
+            min-height: 40px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cancion-item {
+            background: #fff8e1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🎧 Programación del Día</h1>
+    <p>Consulta lo que sonará en cada hora</p>
+</div>
+
+<div class="timeline">
+    {% for hora in horas %}
+        <div class="hora-slot">
+            <h3>{{ hora }}:00 - {{ hora + 1 }}:00</h3>
+            <div class="contenedor-canciones" id="hora-{{ hora }}">
+                {% for cancion in programacion.get(hora, []) %}
+                    <div class="cancion-item">{{ cancion }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Escuchando en Vivo - Emisora</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/live.css') }}">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body>
+
+<div class="layout">
+    <div class="broadcast-panel">
+        <header class="header">
+            <h1>🎧 Escuchando en Vivo</h1>
+            <div class="status-line">
+                <span class="status-icon">🔊</span>
+                <span id="statusText">Reproduciendo transmisión en vivo</span>
+            </div>
+        </header>
+
+        <div style="text-align: center; margin: 1rem;">
+            <button id="enableAudioBtn">Habilitar Audio 🔊</button>
+        </div>
+
+        <footer>
+            <p>Disfruta la música en tiempo real 🎶</p>
+        </footer>
+    </div>
+
+    <div class="chat-panel">
+        <h2>💬 Chat en Vivo</h2>
+        <div id="chatMessages" class="chat-messages"></div>
+        <form id="chatForm">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required />
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/chatUtils.js') }}"></script>
+<script>
+    const socket = io();
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatMessages');
+    const enableAudioBtn = document.getElementById('enableAudioBtn');
+
+    let audioEnabled = false;
+
+    enableAudioBtn.addEventListener('click', () => {
+        audioEnabled = true;
+        enableAudioBtn.style.display = 'none';
+    });
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (text !== "") {
+            const msg = {
+                text: text,
+                sender: "Oyente",
+                id: Date.now(),
+                reactions: {}
+            };
+            socket.emit('chat-message', msg);
+            addMessageToChatFull(msg, true);
+            chatInput.value = "";
+        }
+    });
+
+    socket.on('chat-message', (msg) => {
+        addMessageToChatFull(msg, msg.sender === "Oyente");
+    });
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const bufferQueue = [];
+
+    function playBufferQueue() {
+        if (bufferQueue.length > 0) {
+            const pcmBuffer = bufferQueue.shift();
+            const audioBuffer = audioContext.createBuffer(1, pcmBuffer.length, audioContext.sampleRate);
+            audioBuffer.copyToChannel(pcmBuffer, 0);
+
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start();
+
+            source.onended = playBufferQueue;
+        } else {
+            setTimeout(playBufferQueue, 10);
+        }
+    }
+
+    playBufferQueue();
+
+    socket.on('broadcast-audio', (arrayBuffer) => {
+        if (!audioEnabled) return;
+
+        const floatData = new Float32Array(arrayBuffer);
+        bufferQueue.push(floatData);
+    });
+</script>
+
+</body>
+</html>

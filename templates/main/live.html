@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Locutor - En Vivo</title>
+    <link rel="stylesheet" href="/static/css/live.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+</head>
+<body>
+
+<div class="layout">
+    <div class="music-panel">
+        <h2>🎵 Reproductor</h2>
+
+        <div class="selector">
+            <label for="categorySelect">Categoría:</label>
+            <select id="categorySelect">
+                <option disabled selected>Selecciona una categoría</option>
+            </select>
+        </div>
+
+        <div class="song-list" id="songList"></div>
+
+        <div class="now-playing" id="songTitle">Ninguna canción seleccionada</div>
+        <audio id="audioPlayer" style="display: none;"></audio>
+        <audio id="broadcastPlayer" style="display:none;"></audio>
+        <div class="controls">
+            <button id="playBtn">▶️ Reproducir</button>
+            <button id="pauseBtn">⏸️ Pausar</button>
+
+            <div class="volume-wrapper">
+                <label for="volumeControl">🔉</label>
+                <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1"/>
+            </div>
+            <div class="seek-wrapper">
+                <label for="seekBar">⏱</label>
+                <input type="range" id="seekBar" min="0" max="100" value="0"/>
+            </div>
+        </div>
+        <div class="playlist-panel">
+            <h3 style="margin-top: 20px; margin-bottom: 8px;">📋 Programación / Cola</h3>
+            <ul id="queueList"></ul>
+            <button id="clearQueueBtn">🗑️ Limpiar Cola</button>
+        </div>
+    </div>
+
+
+    <div class="broadcast-panel">
+        <header class="header">
+            <h1>🎙️ En Vivo - Locutor</h1>
+            <div class="status-line">
+                <span class="status-icon">🎧</span>
+                <span id="statusText">Listo para transmitir</span>
+            </div>
+        </header>
+        <!--
+  <div class="top-actions">
+      <button id="disconnectBtn">🔌 Desconectar Chat</button>
+      <button id="backBtn">⬅️ Menú Admin</button>
+  </div>
+  -->
+
+
+        <div class="transmission-controls">
+            <button id="startBtn">▶️ Iniciar Transmisión</button>
+            <button id="stopBtn" disabled>⏹️ Finalizar</button>
+            <button id="muteMicBtn" style="margin-left:12px;" disabled>🎤 Silenciar Mic</button>
+
+        </div>
+
+        <footer>
+            <p>Conectado como <strong>Locutor Principal</strong></p>
+        </footer>
+    </div>
+    <div class="chat-panel">
+        <h2>💬 Chat en Vivo</h2>
+        <div id="chatMessages" class="chat-messages"></div>
+        <form id="chatForm">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." required/>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/chatUtils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/live.js') }}"></script>
+</body>
+
+</html>

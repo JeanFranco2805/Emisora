@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locutores - El Gran Sonero Estéreo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/locutores.css') }}">
+</head>
+<body>
+
+<header class="locutores-header">
+    <h1>🎤 Nuestros Locutores</h1>
+    <p>Conoce a las voces que le dan vida a nuestra emisora</p>
+
+    <nav>
+        <ul>
+            <li><a href="#programacion">🎧 Programación</a></li>
+            <li><a href="/en-vivo">🔴 En Vivo</a></li>
+            <li><a href="/locutores">🎤 Locutores</a></li>
+            <li><a href="/contacto">📬 Contacto</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section id="locutores" class="seccion">
+    <div class="locutores-grid">
+        <div class="locutor-card">
+            <img src="{{ url_for('static', filename='images/josef.jpg') }}" alt="Locutor 1">
+            <h3>DJ Josef</h3>
+            <p></p>
+        </div>
+        <div class="locutor-card">
+            <img src="{{ url_for('static', filename='images/deivis.png') }}" alt="Locutor 2">
+            <h3>DJ Deivis</h3>
+            <p>El sabor del Caribe llega con la mejor salsa verbenera. En vivo todos los fines de semana.</p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

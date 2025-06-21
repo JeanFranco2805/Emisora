@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio - Emisora en Línea</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+<header class="tropical-header">
+    <h1>🎶 El Gran Sonero Estéreo 🎶</h1>
+    <p>¡Ritmo, sabor y alegría las 24 horas del día! 🌞🌴</p>
+
+    <nav>
+        <ul>
+            <li><a href="#programacion">🎧 Programación</a></li>
+            <li><a href="/en-vivo">🔴 En Vivo</a></li>
+            <li><a href="/locutores">🎤 Locutores</a></li>
+            <li><a href="/contacto">📬 Contacto</a></li>
+        </ul>
+    </nav>
+
+    <div class="social-media">
+        <span>🌺 Síguenos:</span>
+        <a href="https://facebook.com" target="_blank">Facebook</a> |
+        <a href="https://instagram.com" target="_blank">Instagram</a> |
+        <a href="https://twitter.com" target="_blank">X</a>
+    </div>
+</header>
+
+
+
+<section class="zona-tropical">
+    <!-- Nubes arriba -->
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4">
+
+    <!-- Nubes abajo -->
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9">
+
+    <!-- Sol -->
+    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol">
+
+    <div class="contenedor-imagenes">
+        <img src="{{ url_for('static', filename='images/sonero.png') }}" alt="El Gran Sonero">
+        <img src="{{ url_for('static', filename='images/sonero2.png') }}" alt="El Gran Sonero 2">
+        <img src="{{ url_for('static', filename='images/sonero1.jpg') }}" alt="El Gran Sonero 1">
+    </div>
+</section>
+
+<main class="playlist-container">
+    <button id="toggleSidebar" class="menu-btn">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <h2>📻 Menú</h2>
+        <ul>
+            <li><a href="#programacion">📅 Programación</a></li>
+            <li><a href="/en-vivo">💬 Chat en Vivo</a></li>
+            <li><a href="#noticias">📰 Noticias</a></li>
+            <li><a href="/locutores">🎙️ Locutor</a></li>
+            <li><a href="#favoritos">❤️ Favoritos</a></li>
+        </ul>
+    </div>
+
+    <div class="live-card">
+        <div class="live-info">
+            <h2>🔴 En Vivo Ahora</h2>
+            <p>Únete a la transmisión en vivo con música y locución en tiempo real</p>
+            <a href="/en-vivo" class="live-button">Escuchar ahora</a>
+        </div>
+        <img src="{{ url_for('static', filename='images/envivo.png') }}" alt="Transmisión en Vivo">
+    </div>
+    <div id="categoryCardsContainer" class="playlist-grid"></div>
+
+</main>
+
+<div id="playlistModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="playlistTitle">🎵 Playlist</h2>
+        <ul id="playlistSongs" class="playlist-list"></ul>
+    </div>
+</div>
+
+
+<audio id="audioPlayer" style="display: none;"></audio>
+
+<div id="youtubePlayerContainer" style="display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #000;">
+    <iframe id="youtubePlayer" width="100%" height="80" frameborder="0"
+            allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>

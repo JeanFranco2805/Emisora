@@ -1,0 +1,74 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #fffbe6, #ffeaa7);
+    color: #333;
+}
+
+.programacion-header {
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    padding: 30px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.programacion-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+.programacion-header p {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.programacion-container {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.bloque-horario {
+    background: white;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.bloque-horario h2 {
+    color: #d84315;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.playlist-hora {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+.playlist-hora li {
+    background: #fff3e0;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.agregar-cancion {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.agregar-cancion:hover {
+    background-color: #fb8c00;
+}

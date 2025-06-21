@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>📅 Programación Musical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/programacion.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            background: #fefbd8;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #ffb703;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .cancion-item {
+            background: #fff8e1;
+            padding: 10px 10px 10px 16px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: grab;
+            position: relative;
+        }
+        .cancion-item.dragging {
+            opacity: 0.5;
+        }
+        .cancion-delete {
+            background: none;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            margin-left: auto;
+            padding: 2px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .cancion-delete:hover {
+            opacity: 1;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .programacion-header {
+            background: linear-gradient(to right, #fb8500, #ffb703);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-bottom: 4px solid #ffaa00;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .hora-slot {
+            background: #fff;
+            border: 2px dashed #ccc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .hora-slot h3 {
+            margin: 0 0 10px;
+            color: #fb5607;
+        }
+
+        .contenedor-canciones {
+            min-height: 60px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .droppable.hover {
+            border-color: #ff9100;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>🎵 Canciones</h2>
+    <select id="categoriaSelector"></select>
+    <div id="canciones-disponibles"></div>
+</div>
+
+<div class="main-content">
+    <header class="programacion-header">
+        <h1>📅 Programación Musical</h1>
+        <p>Arrastra canciones al horario correspondiente. Puedes reordenar y eliminar canciones.</p>
+    </header>
+    <div class="timeline">
+        {% for hora in horas %}
+            <div class="hora-slot droppable" data-hora="{{ hora }}">
+                <h3>{{ hora }}:00 - {{ hora + 1 }}:00</h3>
+                <div class="contenedor-canciones" id="hora-{{ hora }}"></div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    const selector = document.getElementById('categoriaSelector');
+    const contenedor = document.getElementById('canciones-disponibles');
+
+    function crearCancionItem(texto) {
+        const item = document.createElement('div');
+        item.className = 'cancion-item';
+        item.textContent = texto;
+
+        // Icono de basura
+        const btn = document.createElement('button');
+        btn.className = 'cancion-delete';
+        btn.innerHTML = `
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <rect x="5" y="7" width="10" height="8" rx="1.5" fill="#e63946"/>
+            <rect x="8" y="10" width="1.5" height="3" rx="0.75" fill="white"/>
+            <rect x="10.5" y="10" width="1.5" height="3" rx="0.75" fill="white"/>
+            <rect x="7" y="4" width="6" height="2" rx="1" fill="#e63946"/>
+          </svg>
+        `;
+        btn.title = "Eliminar";
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const slot = item.closest('.droppable');
+            item.remove();
+            guardarProgramacionSlot(slot);
+        });
+        item.appendChild(btn);
+
+        item.setAttribute('draggable', 'true');
+        item.addEventListener('dragstart', e => {
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', texto);
+        });
+        item.addEventListener('dragend', () => {
+            item.classList.remove('dragging');
+        });
+        return item;
+    }
+
+    // Carga las categorías desde el endpoint
+    fetch('/api/folders')
+        .then(res => res.json())
+        .then(data => {
+            data.folders.forEach(folder => {
+                const option = document.createElement('option');
+                option.value = folder;
+                option.textContent = folder;
+                selector.appendChild(option);
+            });
+            if (data.folders.length > 0) {
+                cargarCanciones(data.folders[0]);
+            }
+        });
+
+    selector.addEventListener('change', () => {
+        const categoria = selector.value;
+        cargarCanciones(categoria);
+    });
+
+    function cargarCanciones(categoria) {
+        contenedor.innerHTML = "<p>Cargando...</p>";
+        fetch(`/api/category-songs/${encodeURIComponent(categoria)}`)
+            .then(res => res.json())
+            .then(data => {
+                contenedor.innerHTML = "";
+                data.songs.forEach(song => {
+                    const texto = `${song.title} - ${song.artist}`;
+                    const item = crearCancionItem(texto);
+                    contenedor.appendChild(item);
+                });
+            });
+    }
+
+    // Drag & drop a slots
+    document.querySelectorAll('.droppable').forEach(slot => {
+        const container = slot.querySelector('.contenedor-canciones');
+
+        slot.addEventListener('dragover', e => {
+            e.preventDefault();
+            slot.classList.add('hover');
+
+            // --- Para drag interno (reordenar) ---
+            const dragging = container.querySelector('.dragging');
+            const afterElement = getDragAfterElement(container, e.clientY);
+            if (dragging) {
+                if (afterElement == null) {
+                    container.appendChild(dragging);
+                } else {
+                    container.insertBefore(dragging, afterElement);
+                }
+            }
+        });
+
+        slot.addEventListener('dragleave', () => {
+            slot.classList.remove('hover');
+        });
+
+        slot.addEventListener('drop', e => {
+            e.preventDefault();
+            slot.classList.remove('hover');
+            const data = e.dataTransfer.getData('text/plain');
+
+            // Evita duplicados al reordenar interno
+            const existe = Array.from(container.children).some(el => el.textContent.startsWith(data));
+            if (!existe) {
+                const nuevo = crearCancionItem(data);
+                container.appendChild(nuevo);
+            }
+
+            guardarProgramacionSlot(slot);
+        });
+
+        // Drag and drop interno para ordenar
+        container.addEventListener('drop', function (e) {
+            guardarProgramacionSlot(slot);
+        });
+        container.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            const dragging = container.querySelector('.dragging');
+            const afterElement = getDragAfterElement(container, e.clientY);
+            if (dragging) {
+                if (afterElement == null) {
+                    container.appendChild(dragging);
+                } else {
+                    container.insertBefore(dragging, afterElement);
+                }
+            }
+        });
+    });
+
+    // Ayuda a detectar posición para drop en reordenar
+    function getDragAfterElement(container, y) {
+        const items = [...container.querySelectorAll('.cancion-item:not(.dragging)')];
+        return items.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: -Infinity }).element;
+    }
+
+    function guardarProgramacionSlot(slot) {
+        if (!slot) return;
+        const container = slot.querySelector('.contenedor-canciones');
+        const canciones = Array.from(container.querySelectorAll('.cancion-item'))
+            .map(el => el.childNodes[0].textContent.trim());
+        const hora = slot.dataset.hora;
+        fetch("/api/guardar-programacion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ hora, canciones })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.ok) console.log(`✅ Guardado para la hora ${hora}`);
+                else console.error("❌ Error al guardar:", data);
+            });
+    }
+
+    // Al cargar la página, trae la programación y pinta cada canción
+    window.addEventListener("DOMContentLoaded", () => {
+        fetch("/api/cargar-programacion")
+            .then(res => res.json())
+            .then(data => {
+                Object.entries(data).forEach(([hora, canciones]) => {
+                    const contenedor = document.querySelector(`#hora-${hora}`);
+                    if (contenedor) {
+                        canciones.forEach(texto => {
+                            const item = crearCancionItem(texto);
+                            contenedor.appendChild(item);
+                        });
+                    }
+                });
+            })
+            .catch(err => console.error("❌ Error al cargar programación:", err));
+    });
+</script>
+
+</body>
+</html>

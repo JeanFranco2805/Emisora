@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script type="module">
+        import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js';
+    </script>
+    <script src="{{ url_for('static', filename='js/chatUtils.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/playlist-admin.js') }}"></script>
+
+</head>
+<body>
+<header class="admin-header">
+    <div class="header-left">
+        <img src="../../static/images/logo.png" alt="Logo" class="header-logo" />
+        <h1>Admin Panel</h1>
+    </div>
+    <div class="header-center">
+    </div>
+    <div class="header-right">
+        <input type="search" placeholder="Buscar..." class="header-search" />
+        <button class="icon-btn notification-btn" title="Notificaciones">
+            🔔
+            <span class="badge">3</span>
+        </button>
+        <button class="icon-btn profile-btn" title="Perfil">
+            👤
+        </button>
+    </div>
+</header>
+
+<main class="admin-panel">
+    <aside class="admin-sidebar">
+        <h2>🧭 Navegación</h2>
+        <ul>
+            <li><button class="tab-btn" data-tab="categorias">🎼 Categorías</button></li>
+            <li><button class="tab-btn" data-tab="playlists">📂 Playlists</button></li>
+            <li><button class="tab-btn" data-tab="en-vivo">🎙️ En Vivo</button></li>
+            <li><button class="tab-btn" data-tab="chat">💬 Chat</button></li>
+            <li><button class="tab-btn" data-tab="usuarios">👥 Usuarios</button></li>
+        </ul>
+    </aside>
+
+    <section class="admin-content">
+        <div class="tab-content" id="categorias">
+            <h2>🎼 Categorías de Música</h2>
+            <ul class="category-list">
+                <li>Vallenato <button class="edit-btn">Editar</button></li>
+                <li>Salsa <button class="edit-btn">Editar</button></li>
+                <li>Variada <button class="edit-btn">Editar</button></li>
+            </ul>
+            <input type="text" placeholder="Nueva categoría..." id="categoryName">
+            <button class="action-btn" id="action-btn">➕ Añadir Categoría</button>
+        </div>
+
+        <div class="tab-content" id="playlists" style="display: none;">
+            <h2>📂 Administración de Playlists</h2>
+
+            <label for="genreSelect">Seleccionar género:</label>
+            <select id="genreSelect"></select>
+            <input type="file" name="file" accept="audio/*,video/*" required>
+            <ul class="admin-song-list"></ul>
+            <input type="text" id="titleInput" placeholder="Título">
+            <input type="text" id="artistInput" placeholder="Artista">
+            <input type="text" id="idInput" placeholder="ID Cloudinary">
+            <button class="action-btn" id="addSongBtn">➕ Agregar Canción</button>
+        </div>
+
+        <div class="tab-content" id="en-vivo" style="display: none;">
+            <h2>🎙️ En Vivo</h2>
+            <p>Haz clic para unirte como locutor o administrar la transmisión.</p>
+            <button class="action-btn" id="goLiveBtn">Ingresar al En Vivo</button>
+        </div>
+        <div class="tab-content" id="chat" style="display: none;">
+            <h2>💬 Chat en Vivo (<span id="userCount">1</span> conectados)</h2>
+            <div id="chatNotifications" class="chat-notifications"></div>
+
+            <div id="typingStatus" class="typing-status"></div>
+
+            <div class="day-separator">Hoy</div>
+
+            <div class="chat-window" id="chatWindow">
+                <div class="chat-message user my-message new-message">
+                    <div class="avatar">T</div>
+                    <div class="message-content">
+                        <div class="meta">
+                            <span class="username">[SISTEMA] <span class="badge">⭐ VIP</span></span>
+                            <span class="timestamp">[12:34]</span>
+                        </div>
+                        <div class="quote">"Bienvenido a la tranmisión del chat en vivo"</div>
+                        <div class="message-text">Hola a todos! 🚀</div>
+                        <div class="reactions">
+                            <button>👍 3</button>
+                            <button>❤️ 2</button>
+                            <button>😂 1</button>
+                        </div>
+                    </div>
+                    <button class="delete-msg-btn" title="Eliminar mensaje">🗑️</button>
+                </div>
+            </div>
+
+            <div class="slow-mode-status" id="slowModeStatus">Modo lento: 1 mensaje cada 10 seg.</div>
+
+            <div class="chat-input">
+                <input type="text" id="chatMessageInput" placeholder="Escribe un mensaje...">
+                <div id="emojiPickerContainer" style="display:none; position:absolute; bottom:80px; right:20px; z-index:1000;"></div>
+                <button id="emojiBtn" class="emoji-btn">😊</button>
+                <button id="gifBtn" class="gif-btn">GIF</button>
+                <div id="gifModal" class="modal" style="display:none;">
+                    <div class="modal-content" style="max-height: 500px; overflow-y: auto;">
+                        <span class="close-btn" id="closeGifModal">×</span>
+                        <h3>Buscar GIF</h3>
+                        <input type="text" id="gifSearchInput" placeholder="Buscar GIF..." style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;">
+                        <div id="gifResults" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"></div>
+                    </div>
+                </div>
+
+                <button id="sendChatMessageBtn" class="send-btn">Enviar</button>
+            </div>
+            <div class="moderation-tools">
+                <h3>Herramientas de Moderación</h3>
+                <div class="moderation-buttons">
+                    <button class="moderate-btn" id="toggleChatBtn">🔒 Cerrar Chat</button>
+                    <button class="moderate-btn" id="silenceUserBtn">🔇 Silenciar Usuario</button>
+                    <button class="moderate-btn" id="expelUserBtn">🚫 Expulsar Usuario</button>
+                    <button class="moderate-btn" id="restoreUserBtn">♻️ Restaurar Usuario</button>
+                </div>
+                <div id="emojiModal" class="modal" style="display:none;">
+                    <div class="modal-content" style="max-height: 400px; overflow-y: auto;">
+                        <span class="close-btn" id="closeEmojiModal">×</span>
+                        <h3>Selecciona un Emoji</h3>
+                        <div id="emojiGrid" style="display:flex; flex-wrap:wrap; gap:10px; font-size:24px; cursor:pointer; justify-content:center; padding:10px;"></div>
+                    </div>
+                </div>
+
+                <div class="moderation-lists">
+                    <h4>Usuarios silenciados:</h4>
+                    <ul id="silencedList"></ul>
+
+                    <h4>Usuarios expulsados:</h4>
+                    <ul id="expelledList"></ul>
+
+                    <h4>Logs de moderación:</h4>
+                    <ul id="moderationLogs"></ul>
+                </div>
+            </div>
+
+            <div class="theme-toggle">
+                <label>
+                    <input type="checkbox" id="themeToggle"> 🌙 Modo Oscuro
+                </label>
+            </div>
+        </div>
+
+        <div class="tab-content" id="usuarios" style="display: none;">
+            <h2>👥 Usuarios</h2>
+            <p>Ver y administrar los usuarios registrados en la plataforma.</p>
+        </div>
+    </section>
+</main>
+
+<script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+            contents.forEach(c => c.style.display = 'none');
+            document.getElementById(target).style.display = 'block';
+        });
+    });
+</script>
+<div id="editCategoryModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h2>Editar Categoría: <span id="modalCategoryName"></span></h2>
+        <ul id="modalSongList" class="modal-song-list"></ul>
+        <button id="deleteCategoryBtn" class="delete-category-btn">🗑️ Eliminar Categoría</button>
+    </div>
+</div>
+<div id="moderationActionModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-btn" id="closeModerationModal">×</span>
+        <h2 id="moderationModalTitle">Acción Moderación</h2>
+        <input type="text" id="moderationUsernameInput" placeholder="Ingresa el nombre de usuario..." style="width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;">
+        <button id="confirmModerationBtn" class="action-btn" style="width:100%;">Confirmar</button>
+    </div>
+</div>
+
+</body>
+</html>
