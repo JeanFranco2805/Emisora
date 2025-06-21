@@ -19,7 +19,6 @@ cloudinary==1.44.0
 colorama==0.4.6
 dnspython==2.6.1
 email_validator==2.2.0
-greenlet==3.1.1
 idna==3.7
 itsdangerous==2.2.0
 ninja==1.11.1.1
@@ -35,8 +34,9 @@ typing_extensions==4.12.2
 tzdata==2024.1
 wheel==0.43.0
 flask-cors==5.0.0
-eventlet==0.35.1
+
+gevent==25.5.1
+
 gunicorn==22.0.0
 
-gevent~=25.5.1
 db~=0.1.1
