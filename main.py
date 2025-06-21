@@ -1,14 +1,10 @@
 import os
-
 import requests
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
 from flask import request, jsonify
-from backend import song
 from db import db
 from backend.song import Song, Programacion
 

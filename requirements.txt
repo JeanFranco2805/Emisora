@@ -35,5 +35,5 @@ typing_extensions==4.12.2
 tzdata==2024.1
 wheel==0.43.0
 flask-cors==5.0.0
-eventlet==0.35.1
+#eventlet==0.35.1
 gunicorn==22.0.0

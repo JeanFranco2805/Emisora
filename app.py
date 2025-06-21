@@ -1,13 +1,13 @@
 import json
 
-import eventlet
+#import eventlet
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from backend.song import Programacion
 from frontend.admin.admin import admin_bp
 from main import api
 from db import db
-eventlet.monkey_patch(all=False, socket=True)
+#eventlet.monkey_patch(all=False, socket=True)
 
 
 app = Flask(__name__)
