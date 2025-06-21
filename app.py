@@ -1,8 +1,8 @@
+import eventlet
+eventlet.monkey_patch()
 import json
-
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-
 from backend.song import Programacion
 from frontend.admin.admin import admin_bp
 from main import api
@@ -20,7 +20,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-socketio = SocketIO(app, cors_allowed_origins="*")  # habilita CORS para que funcione desde JS
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 @app.route('/')
