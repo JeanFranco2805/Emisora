@@ -37,20 +37,18 @@ def login_required(f):
 
     return decorated_function
 
+
 @app.route('/')
-@login_required
 def index():
     return render_template('main/index.html')
 
 
 @app.route('/en-vivo')
-@login_required
 def onLive():
     return render_template('main/en-vivo.html')
 
 
 @app.route('/contacto')
-@login_required
 def contact():
     return render_template('main/contacto.html')
 
@@ -61,7 +59,6 @@ def login():
 
 
 @app.route('/programacion')
-@login_required
 def programacion():
     horas = list(range(24))
     programaciones = Programacion.query.all()
@@ -78,7 +75,6 @@ def programacion():
 
 
 @app.route('/locutores')
-@login_required
 def speakers():
     return render_template('main/locutores.html')
 
