@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sonero Estéreo - Login/Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div class="container">
+    <svg class="wave" viewBox="0 0 400 30" preserveAspectRatio="none">
+        <path d="M0,15 Q100,30 200,15 T400,15 V30 H0 Z" fill="#FF7043"></path>
+    </svg>
+    <h1 class="logo">
+        <span class="music-note">&#9835;</span> Sonero Estéreo
+    </h1>
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('login')">Iniciar Sesión</button>
+        <button class="tab" onclick="showTab('signup')">Registrarse</button>
+    </div>
+    <div id="login" class="tab-content active">
+        <form id="login-form">
+            <label for="login-email">Correo electrónico</label>
+            <div class="input-icon">
+                <span class="icon">@</span>
+                <input type="email" id="login-email" required />
+            </div>
+
+            <label for="login-password">Contraseña</label>
+            <div class="input-icon">
+                <span class="icon">&#128274;</span>
+                <input type="password" id="login-password" required />
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+        </form>
+    </div>
+    <div id="signup" class="tab-content">
+        <form id="signup-form">
+            <label for="signup-name">Nombre completo</label>
+            <div class="input-icon">
+                <span class="icon">&#128100;</span>
+                <input type="text" id="signup-name" required />
+            </div>
+
+            <label for="signup-email">Correo electrónico</label>
+            <div class="input-icon">
+                <span class="icon">@</span>
+                <input type="email" id="signup-email" required />
+            </div>
+
+            <label for="signup-password">Contraseña</label>
+            <div class="input-icon">
+                <span class="icon">&#128274;</span>
+                <input type="password" id="signup-password" required />
+            </div>
+            <button type="submit" class="btn">Registrarse</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function showTab(tab) {
+        document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
+        document.getElementById(tab).classList.add('active');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Bienvenido!',
+                text: 'Redirigiendo...',
+                timer: 1600,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = '/';
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.mensaje || 'Credenciales incorrectas'
+            });
+        }
+    });
+
+    // SIGNUP
+    document.getElementById('signup-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nombre = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+
+        const res = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `nombre=${encodeURIComponent(nombre)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Usuario registrado!',
+                text: 'Ahora puedes iniciar sesión.',
+                timer: 1700,
+                showConfirmButton: false
+            }).then(() => {
+                showTab('login');
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.mensaje || 'Error al registrar usuario'
+            });
+        }
+    });
+
+</script>
+</body>
+</html>

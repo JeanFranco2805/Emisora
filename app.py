@@ -1,4 +1,5 @@
 from gevent import monkey
+
 monkey.patch_all()
 import json
 from flask import Flask, render_template
@@ -7,7 +8,6 @@ from backend.song import Programacion
 from frontend.admin.admin import admin_bp
 from main import api
 from db import db
-
 
 app = Flask(__name__)
 
@@ -21,24 +21,47 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-socketio = SocketIO(app, async_mode="gevent",cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode="gevent", cors_allowed_origins="*")
+
+from functools import wraps
+from flask import session, redirect, url_for, flash
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario_id' not in session:
+            flash('Debes iniciar sesión para acceder a esta página.', 'warning')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 @app.route('/')
+@login_required
 def index():
     return render_template('main/index.html')
 
 
 @app.route('/en-vivo')
+@login_required
 def onLive():
     return render_template('main/en-vivo.html')
 
 
 @app.route('/contacto')
+@login_required
 def contact():
     return render_template('main/contacto.html')
 
 
+@app.route('/login')
+def login():
+    return render_template('main/login.html')
+
+
 @app.route('/programacion')
+@login_required
 def programacion():
     horas = list(range(24))
     programaciones = Programacion.query.all()
@@ -53,7 +76,9 @@ def programacion():
         programacion=programacion_dict
     )
 
+
 @app.route('/locutores')
+@login_required
 def speakers():
     return render_template('main/locutores.html')
 

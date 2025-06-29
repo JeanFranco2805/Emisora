@@ -1,12 +1,12 @@
 import os
 import requests
-from flask import Blueprint
+from flask import Blueprint, session
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from flask import request, jsonify
 from db import db
-from backend.song import Song, Programacion
+from backend.song import Song, Programacion, Usuario
 
 api = Blueprint("api", __name__)
 
@@ -18,6 +18,50 @@ cloudinary.config(
 )
 
 songs = []
+
+
+@api.route('/signup', methods=['POST'])
+def signup():
+    nombre = request.form['nombre']
+    email = request.form['email']
+    password = request.form['password']
+    if Usuario.query.filter_by(email=email).first():
+        return jsonify({'mensaje': 'El correo ya existe'}), 400
+    usuario = Usuario(nombre=nombre, email=email)
+    usuario.set_password(password)
+    db.session.add(usuario)
+    db.session.commit()
+    return jsonify({'mensaje': 'Usuario registrado exitosamente'})
+
+
+@api.route('/login', methods=['POST'])
+def login():
+    email = request.form['email']
+    password = request.form['password']
+    usuario = Usuario.query.filter_by(email=email).first()
+    if usuario and usuario.check_password(password):
+        session['usuario_id'] = usuario.id
+        return jsonify({'mensaje': 'Login exitoso'})
+    return jsonify({'mensaje': 'Credenciales incorrectas'}), 401
+
+@api.route('/logout')
+def logout():
+    session.pop('usuario_id', None)
+    return jsonify({'mensaje': 'Sesión cerrada'})
+
+
+@api.route('/profile')
+def profile():
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        return jsonify({'mensaje': 'No autenticado'}), 401
+    usuario = Usuario.query.get(usuario_id)
+    return jsonify({
+        'nombre': usuario.nombre,
+        'email': usuario.email,
+        'rol': usuario.rol
+    })
+
 
 
 @api.route("/upload", methods=["POST"])
@@ -162,7 +206,6 @@ def cargar_programacion():
     return jsonify(resultado)
 
 
-
 @api.route("/category-songs/<category_name>", methods=["GET"])
 def get_songs_by_category(category_name):
     try:
@@ -288,7 +331,6 @@ def get_all_folders():
 from flask import Response
 
 
-
 @api.route("/proxy-cloudinary/<path:public_id>")
 def proxy_cloudinary(public_id):
     try:
@@ -325,6 +367,7 @@ def proxy_cloudinary(public_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @api.route("/todos-los-temas", methods=["GET"])
 def obtener_todas_las_canciones():
