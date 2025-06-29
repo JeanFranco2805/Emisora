@@ -41,7 +41,12 @@
 
 <script src="{{ url_for('static', filename='js/chatUtils.js') }}"></script>
 <script>
-    const socket = io();
+    const socket = io('https://emisora.onrender.com', {
+        transports: ['websocket'],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
+    });
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const chatMessages = document.getElementById('chatMessages');

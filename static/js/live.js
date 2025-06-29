@@ -43,7 +43,12 @@ startBtn.addEventListener('click', async () => {
         mixedSource.connect(scriptNode);
         scriptNode.connect(audioContext.destination);
 
-        socket = io();
+        const socket = io('https://emisora.onrender.com', {
+            transports: ['websocket'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
 
         scriptNode.onaudioprocess = (audioProcessingEvent) => {
             const inputBuffer = audioProcessingEvent.inputBuffer;
