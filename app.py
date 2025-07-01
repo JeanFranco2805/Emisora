@@ -39,26 +39,31 @@ def login_required(f):
 
 
 @app.route('/')
+@login_required
 def index():
     return render_template('main/index.html')
 
 
 @app.route('/en-vivo')
+@login_required
 def onLive():
     return render_template('main/en-vivo.html')
 
 
 @app.route('/contacto')
+@login_required
 def contact():
     return render_template('main/contacto.html')
 
 
 @app.route('/login')
+@login_required
 def login():
     return render_template('main/login.html')
 
 
 @app.route('/programacion')
+@login_required
 def programacion():
     horas = list(range(24))
     programaciones = Programacion.query.all()
@@ -75,16 +80,15 @@ def programacion():
 
 
 @app.route('/locutores')
+@login_required
 def speakers():
     return render_template('main/locutores.html')
 
 
-# Registro de Blueprints
 app.register_blueprint(api, url_prefix='/api')
 app.register_blueprint(admin_bp)
 
 
-# Eventos Socket.IO
 @socketio.on('connect')
 def handle_connect():
     print('Cliente conectado')
