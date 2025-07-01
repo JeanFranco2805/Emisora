@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCloudinaryId() {
         const title = titleInput.value.trim().toLowerCase().replace(/\s+/g, '-');
         const artist = artistInput.value.trim().toLowerCase().replace(/\s+/g, '-');
-        idInput.value = `${artist}-${title}`;
+        idInput.value = `${title}`;
     }
 
     titleInput.addEventListener('input', updateCloudinaryId);

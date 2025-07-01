@@ -39,10 +39,18 @@ def login():
     email = request.form['email']
     password = request.form['password']
     usuario = Usuario.query.filter_by(email=email).first()
+
     if usuario and usuario.check_password(password):
         session['usuario_id'] = usuario.id
-        return jsonify({'mensaje': 'Login exitoso'})
+        session['rol'] = usuario.rol
+
+        if usuario.rol.strip().lower() == 'admin':
+            return jsonify({'mensaje': 'Login exitoso', 'redirect': '/admin/'})
+        else:
+            return jsonify({'mensaje': 'Login exitoso', 'redirect': '/'})
+
     return jsonify({'mensaje': 'Credenciales incorrectas'}), 401
+
 
 @api.route('/logout')
 def logout():
@@ -61,7 +69,6 @@ def profile():
         'email': usuario.email,
         'rol': usuario.rol
     })
-
 
 
 @api.route("/upload", methods=["POST"])

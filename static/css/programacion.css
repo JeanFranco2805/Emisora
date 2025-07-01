@@ -72,3 +72,85 @@ body {
 .agregar-cancion:hover {
     background-color: #fb8c00;
 }
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 220px;
+    height: 100%;
+    background: #ffcc80;
+    padding: 20px;
+    transition: left 0.3s ease;
+    z-index: 999;
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #ffb703;
+    color: white;
+    font-size: 24px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.hora-slot {
+    background: linear-gradient(135deg, #fff4e6, #ffe9c4);
+    border-left: 8px solid #ff9f1c;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+    width: 100%;
+}
+
+.hora-slot:hover {
+    transform: translateY(-5px);
+}
+
+.hora-slot h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 20px;
+    color: #e76f51;
+    font-size: 1.6rem;
+}
+
+.hora-slot h3::before {
+    content: "⏰";
+    font-size: 1.4rem;
+}
+
+.contenedor-canciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.cancion-item {
+    background: #fff;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: #444;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ffd29d;
+    font-size: 1rem;
+}

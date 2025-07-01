@@ -1,0 +1,38 @@
+.noticias {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin: 20px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.noticias h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.noticia {
+    background: #fff;
+    padding: 15px 20px;
+    border-left: 4px solid #2196f3;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.noticia h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #222;
+}
+
+.noticia p {
+    margin: 8px 0;
+    color: #444;
+}
+
+.noticia .fecha {
+    font-size: 0.9rem;
+    color: #888;
+}

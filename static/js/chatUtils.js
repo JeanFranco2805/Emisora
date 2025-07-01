@@ -21,19 +21,19 @@ function addMessageToChatFull(msg, isOwn = false, socket) {
     msgDiv.innerHTML = `
         <div class="avatar">${msg.sender.charAt(0)}</div>
         <div class="message-content">
-            <div class="meta">
-                <span class="username">${msg.sender}</span>
-                <span class="timestamp">[${formatTime()}]</span>
-            </div>
+        <div class="message-header">
+          <span class="username">Oyente</span>
+          <span class="timestamp">[23:43]</span>
+        </div>
             ${msg.quote ? `<div class="quote">"${msg.quote}"</div>` : ''}
             <div class="message-text">${msg.text}</div>
             <div class="reactions">
                 <button data-reaction="👍">👍 ${msg.reactions?.['👍'] || 0}</button>
                 <button data-reaction="❤️">❤️ ${msg.reactions?.['❤️'] || 0}</button>
                 <button data-reaction="😂">😂 ${msg.reactions?.['😂'] || 0}</button>
+                <button class="delete-msg-btn" title="Eliminar mensaje">🗑️</button>
             </div>
         </div>
-        <button class="delete-msg-btn" title="Eliminar mensaje">🗑️</button>
     `;
 
     msgDiv.querySelector('.delete-msg-btn').addEventListener('click', () => {

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Locutores - El Gran Sonero Estéreo</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Noticias - El Gran Sonero</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/locutores.css') }}">
 </head>
 <body>
-
 <header class="tropical-header">
     <h1>🎶 El Gran Sonero Estéreo 🎶</h1>
     <p>¡Ritmo, sabor y alegría las 24 horas del día! 🌞🌴</p>
@@ -31,6 +29,7 @@
 </header>
 
 <section class="zona-tropical">
+    <!-- Nubes y sol -->
     <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1">
     <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2">
     <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3">
@@ -59,22 +58,19 @@
     </div>
 
 
-    <section class="locutores-section">
-        <h2>🎤 Nuestros Locutores</h2>
-        <p class="intro">Conoce a las voces que le dan vida a nuestra emisora</p>
+    <section class="noticias">
+        <h2>📰 Noticias Musicales</h2>
 
-        <div class="locutores-grid">
-            <div class="locutor-card">
-                <img src="{{ url_for('static', filename='images/josef.jpg') }}" alt="Locutor 1">
-                <h3>DJ Josef</h3>
-                <p>Con energía y ritmo, Josef anima tus mañanas tropicales de lunes a viernes.</p>
-            </div>
+        <div class="noticia">
+            <h3>🎤 Vuelve Juan Luis Guerra con gira por América Latina</h3>
+            <p>El legendario artista tropical anuncia una serie de conciertos en 8 países. ¡No te lo pierdas!</p>
+            <span class="fecha">Publicado el 29 de junio de 2025</span>
+        </div>
 
-            <div class="locutor-card">
-                <img src="{{ url_for('static', filename='images/deivis.png') }}" alt="Locutor 2">
-                <h3>DJ Deivis</h3>
-                <p>El sabor del Caribe llega con salsa verbenera. En vivo todos los fines de semana.</p>
-            </div>
+        <div class="noticia">
+            <h3>🔥 Salsa y Reggaetón dominan el top 10 esta semana</h3>
+            <p>Explora el ranking con los artistas más escuchados por nuestros oyentes esta semana.</p>
+            <span class="fecha">Publicado el 28 de junio de 2025</span>
         </div>
     </section>
 </main>

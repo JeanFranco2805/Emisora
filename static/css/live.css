@@ -82,7 +82,6 @@ footer strong {
     color: #fff;
 }
 
-/* Chat Styles */
 .chat-panel h2 {
     margin-bottom: 1rem;
     font-size: 1.3rem;
@@ -570,4 +569,9 @@ footer {
     flex-direction: column;
     gap: 1.5rem;
     align-items: center;
+}
+.message-text {
+    color: #000;
+    flex: 1;
+    word-break: break-word;
 }

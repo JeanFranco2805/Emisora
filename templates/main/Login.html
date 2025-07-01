@@ -80,25 +80,36 @@
             body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
         });
 
-        const data = await res.json();
-        if (res.ok) {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Bienvenido!',
-                text: 'Redirigiendo...',
-                timer: 1600,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = '/';
-            });
-        } else {
+        try {
+            const data = await res.json();
+
+            if (res.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Bienvenido!',
+                    text: 'Redirigiendo...',
+                    timer: 1600,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = data.redirect || '/';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.mensaje || 'Credenciales incorrectas'
+                });
+            }
+        } catch (err) {
+            console.error('Error al procesar respuesta JSON:', err);
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: data.mensaje || 'Credenciales incorrectas'
+                title: 'Error del servidor',
+                text: 'Respuesta inesperada del servidor.'
             });
         }
     });
+
 
     // SIGNUP
     document.getElementById('signup-form').addEventListener('submit', async function(e) {
