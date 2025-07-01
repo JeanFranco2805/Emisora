@@ -57,7 +57,6 @@ def contact():
 
 
 @app.route('/login')
-@login_required
 def login():
     return render_template('main/login.html')
 

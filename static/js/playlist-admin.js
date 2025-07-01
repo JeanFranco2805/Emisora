@@ -35,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             list.appendChild(li);
                         }
                     });
-
-                // Cargar en genreSelect (independientemente si tiene canciones)
                 const option = document.createElement('option');
                 option.value = folder;
                 option.textContent = folder.charAt(0).toUpperCase() + folder.slice(1);
@@ -502,6 +500,14 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/admin/live';
     });
 
+    function updateCloudinaryId() {
+        const title = titleInput.value.trim().toLowerCase().replace(/\s+/g, '-');
+        const artist = artistInput.value.trim().toLowerCase().replace(/\s+/g, '-');
+        idInput.value = `${artist}-${title}`;
+    }
+
+    titleInput.addEventListener('input', updateCloudinaryId);
+    artistInput.addEventListener('input', updateCloudinaryId);
     loadCategories();
 
 });
