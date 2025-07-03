@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>📅 Programación Musical</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/programacion.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/programacion-admin.css') }}">
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -13,7 +13,7 @@
         }
 
         .sidebar {
-            width: 280px;
+            width: 240px;
             background: #ffb703;
             padding: 20px;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -141,8 +141,6 @@
         const item = document.createElement('div');
         item.className = 'cancion-item';
         item.textContent = texto;
-
-        // Icono de basura
         const btn = document.createElement('button');
         btn.className = 'cancion-delete';
         btn.innerHTML = `
@@ -174,7 +172,6 @@
         return item;
     }
 
-    // Carga las categorías desde el endpoint
     fetch('/api/folders')
         .then(res => res.json())
         .then(data => {
@@ -208,7 +205,6 @@
             });
     }
 
-    // Drag & drop a slots
     document.querySelectorAll('.droppable').forEach(slot => {
         const container = slot.querySelector('.contenedor-canciones');
 
@@ -216,7 +212,6 @@
             e.preventDefault();
             slot.classList.add('hover');
 
-            // --- Para drag interno (reordenar) ---
             const dragging = container.querySelector('.dragging');
             const afterElement = getDragAfterElement(container, e.clientY);
             if (dragging) {
@@ -237,7 +232,6 @@
             slot.classList.remove('hover');
             const data = e.dataTransfer.getData('text/plain');
 
-            // Evita duplicados al reordenar interno
             const existe = Array.from(container.children).some(el => el.textContent.startsWith(data));
             if (!existe) {
                 const nuevo = crearCancionItem(data);
@@ -247,7 +241,6 @@
             guardarProgramacionSlot(slot);
         });
 
-        // Drag and drop interno para ordenar
         container.addEventListener('drop', function (e) {
             guardarProgramacionSlot(slot);
         });
@@ -265,7 +258,6 @@
         });
     });
 
-    // Ayuda a detectar posición para drop en reordenar
     function getDragAfterElement(container, y) {
         const items = [...container.querySelectorAll('.cancion-item:not(.dragging)')];
         return items.reduce((closest, child) => {
@@ -297,7 +289,6 @@
             });
     }
 
-    // Al cargar la página, trae la programación y pinta cada canción
     window.addEventListener("DOMContentLoaded", () => {
         fetch("/api/cargar-programacion")
             .then(res => res.json())

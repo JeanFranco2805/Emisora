@@ -27,13 +27,13 @@ header {
     background-color: #fff3e0;
     border-radius: 12px;
     width: 220px;
+    flex: 0 0 220px;
     padding: 15px;
     cursor: pointer;
     transition: transform 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     color: #1a1a1a;
 }
-
 .playlist-card:hover {
     transform: scale(1.05);
 }
@@ -59,12 +59,16 @@ header {
     overflow: hidden;
     width: 100%;
     max-width: 900px;
-    margin-bottom: 40px;
+
+    height: 180px;
+    min-height: 180px;
+    max-height: 180px;
+
     box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
 }
 
 .live-card img {
-    width: 50%;
+    flex: 0 0 50%;
     height: 100%;
     object-fit: cover;
 }
@@ -1415,3 +1419,123 @@ nav a:hover {
     flex-direction: column;
     justify-content: flex-start;
 }
+.layout {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+/* 🔽 Responsivo para móviles */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .music-panel,
+    .broadcast-panel,
+    .chat-panel {
+        width: 100%;
+    }
+
+    .chat-panel {
+        margin-top: 1rem;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    #chatForm {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+/* 1. Asegura que el layout no desborde en móviles */
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* 2. Ajusta el contenedor principal */
+.layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. Responsivo para móviles */
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+
+    .music-panel,
+    .broadcast-panel,
+    .chat-panel {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 1rem;
+    }
+
+    #chatForm {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+.chat-messages {
+    max-height: 300px; /* 🔧 puedes ajustar este valor */
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+@media (max-width: 768px) {
+    .chat-messages {
+        max-height: 40vh;
+    }
+}
+.playlist-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+/* Contenedor de tarjetas de categoría */
+#categoryCardsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center; /* o flex-start si prefieres alineación a la izquierda */
+    padding: 20px;
+}
+
+/* Cada tarjeta */
+.playlist-card {
+    width: 220px;
+    background-color: #fceede;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.playlist-card:hover {
+    transform: scale(1.05);
+}
+
+.playlist-card img {
+    width: 100%;
+    border-radius: 8px;
+    height: auto;
+}
+

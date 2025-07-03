@@ -1,0 +1,161 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: linear-gradient(to bottom, #fffbe6, #ffeaa7);
+    color: #333;
+}
+
+.programacion-header {
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    padding: 30px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.programacion-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+.programacion-header p {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.programacion-container {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: auto;
+}
+
+.bloque-horario {
+    background: white;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.bloque-horario h2 {
+    color: #d84315;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.playlist-hora {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+.playlist-hora li {
+    background: #fff3e0;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.agregar-cancion {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.agregar-cancion:hover {
+    background-color: #fb8c00;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    background: #ffcc80;
+    padding: 20px;
+    z-index: 999;
+}
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+
+.sidebar.active {
+    left: 0;
+}
+
+.menu-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #ffb703;
+    color: white;
+    font-size: 24px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+}
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.hora-slot {
+    background: linear-gradient(135deg, #fff4e6, #ffe9c4);
+    border-left: 8px solid #ff9f1c;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+    width: 100%;
+}
+
+.hora-slot:hover {
+    transform: translateY(-5px);
+}
+
+.hora-slot h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 20px;
+    color: #e76f51;
+    font-size: 1.6rem;
+}
+
+.hora-slot h3::before {
+    content: "⏰";
+    font-size: 1.4rem;
+}
+
+.contenedor-canciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.cancion-item {
+    background: #fff;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: #444;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ffd29d;
+    font-size: 1rem;
+}

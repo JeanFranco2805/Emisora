@@ -56,7 +56,6 @@
 
 <main class="playlist-container">
     <button id="toggleSidebar" class="menu-btn">☰</button>
-
     <div class="sidebar" id="sidebar">
         <h2>📻 Menú</h2>
         <ul>
@@ -68,15 +67,17 @@
             <li><a href="/favoritos">❤️ Favoritos</a></li>
         </ul>
     </div>
-    <div class="live-card">
-        <div class="live-info">
-            <h2>🔴 En Vivo Ahora</h2>
-            <p>Únete a la transmisión en vivo con música y locución en tiempo real</p>
-            <a href="/en-vivo" class="live-button">Escuchar ahora</a>
+    <div class="live-wrapper">
+        <div class="live-card">
+            <div class="live-info">
+                <h2>🔴 En Vivo Ahora</h2>
+                <p>Únete a la transmisión en vivo con música y locución en tiempo real</p>
+                <a href="/en-vivo" class="live-button">Escuchar ahora</a>
+            </div>
+            <img src="{{ url_for('static', filename='images/envivo.png') }}" alt="Transmisión en Vivo">
         </div>
-        <img src="{{ url_for('static', filename='images/envivo.png') }}" alt="Transmisión en Vivo">
+        <div id="categoryCardsContainer" class="playlist-grid"></div>
     </div>
-    <div id="categoryCardsContainer" class="playlist-grid"></div>
 
 </main>
 

@@ -14,18 +14,60 @@ const pauseBtn = document.getElementById('pauseBtn');
 const volumeControl = document.getElementById('volumeControl');
 const seekBar = document.getElementById('seekBar');
 const songTitle = document.getElementById('songTitle');
-
+const micSelect = document.getElementById('micSelect');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const chatMessages = document.getElementById('chatMessages');
 let typingTimeout;
 
+
+function activarProteccion() {
+    window.addEventListener('beforeunload', beforeUnloadHandler);
+    window.addEventListener('keydown', interceptarRecarga);
+}
+
+function desactivarProteccion() {
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
+    window.removeEventListener('keydown', interceptarRecarga);
+}
+
+function interceptarRecarga(e) {
+    const recarga =
+        e.key === 'F5' || (e.key === 'r' && (e.ctrlKey || e.metaKey));
+    if (!recarga) return;
+    e.preventDefault();
+    Swal.fire({
+        title: '¿Recargar la página?',
+        text: 'Si recargas se cortará la transmisión en vivo.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Recargar',
+        cancelButtonText: 'Cancelar'
+    }).then(res => {
+        if (res.isConfirmed) {
+            desactivarProteccion();
+            location.reload();
+        }
+    });
+}
+
+
+function beforeUnloadHandler(e) {
+    e.preventDefault();
+    e.returnValue = '';
+}
+
 startBtn.addEventListener('click', async () => {
     try {
+        window.addEventListener('beforeunload', beforeUnloadHandler);
+        activarProteccion()
         const audioContext = new AudioContext();
         const destination = audioContext.createMediaStreamDestination();
-
-        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const deviceId = micSelect.value;
+        micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {deviceId: deviceId ? {exact: deviceId} : undefined}
+        });
+        //micStream = await navigator.mediaDevices.getUserMedia({audio: true});
         const micSource = audioContext.createMediaStreamSource(micStream);
         micSource.connect(destination);
 
@@ -33,8 +75,6 @@ startBtn.addEventListener('click', async () => {
         audioSource.connect(destination);
         audioSource.connect(audioContext.destination);
         micSource.connect(audioContext.destination);
-
-        const mixedStream = destination.stream;
 
         const mixedSource = audioContext.createMediaStreamSource(destination.stream);
 
@@ -88,15 +128,15 @@ startBtn.addEventListener('click', async () => {
             deleteMessageFromChat(msgId);
         });
 
-        socket.on('reaction', ({ messageId, emoji, count }) => {
+        socket.on('reaction', ({messageId, emoji, count}) => {
             updateMessageReaction(messageId, emoji, count);
         });
 
         chatInput.addEventListener('input', () => {
-            socket.emit('typing', { sender: "Locutor" });
+            socket.emit('typing', {sender: "Locutor"});
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => {
-                socket.emit('stop-typing', { sender: "Locutor" });
+                socket.emit('stop-typing', {sender: "Locutor"});
             }, 3000);
         });
 
@@ -118,7 +158,7 @@ startBtn.addEventListener('click', async () => {
 stopBtn.addEventListener('click', () => {
     if (socket) socket.disconnect();
     if (stream) stream.getTracks().forEach(track => track.stop());
-
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
     statusText.textContent = "🟢 Listo para transmitir";
     statusText.style.color = "#00ff94";
     document.getElementById('muteMicBtn').disabled = true;
@@ -129,10 +169,22 @@ stopBtn.addEventListener('click', () => {
     stopBtn.disabled = true;
 });
 
-audioPlayer.addEventListener('ended', () => {
+audioPlayer.addEventListener('ended', async () => {
     console.log("Canción terminada.");
+    if (currentSong) {
+        const horaBogota = Number(
+            new Date().toLocaleString("en-US", {
+                timeZone: "America/Bogota",
+                hour: "2-digit",
+                hour12: false
+            })
+        );
+        await eliminarCancionBD(currentSong.fullText, horaBogota);
+        currentSong = null;
+    }
     playNextSongInQueue();
 });
+
 
 playBtn.addEventListener('click', () => {
     audioPlayer.play().catch(err => {
@@ -232,10 +284,12 @@ categorySelect.addEventListener('change', async () => {
 function playNextSongInQueue() {
     if (playlistQueue.length === 0) {
         console.log("Cola vacía. No hay más canciones para reproducir.");
+        currentSong = null;
         return;
     }
 
     const nextSong = playlistQueue.shift();
+    currentSong = nextSong;
 
     if (queueList.firstChild) {
         queueList.removeChild(queueList.firstChild);
@@ -248,105 +302,121 @@ function playNextSongInQueue() {
     songTitle.textContent = `🎵 ${nextSong.title}`;
 }
 
+
 document.getElementById('clearQueueBtn').addEventListener('click', () => {
     playlistQueue = [];
     queueList.innerHTML = "";
     console.log("Cola limpiada.");
 });
+
 async function cargarProgramacionYReproducir() {
     try {
-        const res = await fetch("/api/cargar-programacion");
-        const data = await res.json();
-
-        // Unir todas las canciones de todos los bloques horarios en una sola lista
-        const cancionesUnidas = Object.values(data).flat();
-
-        if (cancionesUnidas.length === 0) {
-            console.log("🎧 No hay canciones programadas para hoy.");
-            return;
-        }
-
-        // Obtener información detallada de cada canción desde Cloudinary
-        const cancionesDetalles = await Promise.all(
-            cancionesUnidas.map(async texto => {
-                const [title] = texto.split(" - ");
-                // Buscar la canción en la base de datos local por título
-                const res = await fetch(`/api/todos-los-temas`);
-                const cancionesDB = await res.json();
-
-                const song = cancionesDB.find(c => c.title.trim() === title.trim());
-                if (song) {
-                    return {
-                        url: `/api/proxy-cloudinary/${encodeURIComponent(song.public_id)}`,
-                        title: song.title
-                    };
-                }
-                return null;
+        const horaBogota = Number(
+            new Date().toLocaleString("en-US", {
+                timeZone: "America/Bogota",
+                hour: "2-digit",
+                hour12: false
             })
         );
 
-        // Filtrar canciones que sí se encontraron
-        const cancionesValidas = cancionesDetalles.filter(song => song !== null);
+        const res = await fetch("/api/cargar-programacion");
+        const data = await res.json();
 
-        // Agregar a la cola y al HTML
+        const cancionesHora = data[horaBogota] ?? [];
+        if (!cancionesHora.length) {
+            console.log(`🎧 No hay canciones programadas para la hora ${horaBogota}:00`);
+            return;
+        }
+
+        const temasRes = await fetch("/api/todos-los-temas");
+        const cancionesDB = await temasRes.json();
+
+        const cancionesValidas = cancionesHora
+            .map(texto => {
+                const [title] = texto.split(" - ");
+                const song = cancionesDB.find(c => c.title.trim() === title.trim());
+                return song
+                    ? {
+                        url: `/api/proxy-cloudinary/${encodeURIComponent(song.public_id)}`,
+                        title: song.title,
+                        fullText: texto  // Aquí guardamos el texto completo "Título - Artista"
+                    }
+                    : null;
+            })
+            .filter(Boolean);
+
+        playlistQueue = [];
+        queueList.innerHTML = "";
         cancionesValidas.forEach(song => {
             playlistQueue.push(song);
-            const li = document.createElement('li');
+            const li = document.createElement("li");
             li.textContent = `🎵 ${song.title}`;
             queueList.appendChild(li);
         });
 
-        if (audioPlayer.paused && playlistQueue.length > 0) {
+        if (audioPlayer.paused && playlistQueue.length) {
             playNextSongInQueue();
         }
-
     } catch (err) {
-        console.error("❌ Error al cargar y preparar la programación:", err);
+        console.error("❌ Error al cargar programación de la hora actual:", err);
     }
 }
 
+
 cargarProgramacionYReproducir();
+
 async function cargarProgramacionEnCola() {
     try {
+        const horaBogota = Number(
+            new Date().toLocaleString("en-US", {
+                timeZone: "America/Bogota",
+                hour: "2-digit",
+                hour12: false
+            })
+        );
         const res = await fetch('/api/cargar-programacion');
         const data = await res.json();
+        const canciones = data[horaBogota] || [];
+
+        if (canciones.length === 0) {
+            console.log(`⏰ No hay canciones programadas para la hora ${horaBogota}:00`);
+            return;
+        }
+
+        const cloudRes = await fetch('/api/cloudinary-files');
+        const cloudFiles = await cloudRes.json();
 
         let cancionesAgregadas = new Set();
 
-        // 🔁 Recorremos cada hora
-        for (const hora in data) {
-            const canciones = data[hora];
+        for (const cancionTexto of canciones) {
+            if (cancionesAgregadas.has(cancionTexto)) continue;
+            cancionesAgregadas.add(cancionTexto);
 
-            for (const cancionTexto of canciones) {
-                if (cancionesAgregadas.has(cancionTexto)) continue;
-                cancionesAgregadas.add(cancionTexto);
-                const [titulo] = cancionTexto.split(" - ");
-                if (!titulo) continue;
+            const [titulo] = cancionTexto.split(" - ");
+            if (!titulo) continue;
 
-                const cloudRes = await fetch('/api/cloudinary-files');
-                const cloudFiles = await cloudRes.json();
+            const match = cloudFiles.find(c =>
+                c.public_id.includes(titulo.trim())
+            );
 
-                const match = cloudFiles.find(c => c.public_id.includes(titulo.trim()));
-                if (!match) {
-                    console.warn(`❌ No se encontró la canción: ${titulo}`);
-                    continue;
-                }
-
-                // Agregar a la cola
-                playlistQueue.push({
-                    url: `/api/proxy-cloudinary/${encodeURIComponent(match.public_id)}`,
-                    title: cancionTexto
-                });
-                const li = document.createElement('li');
-                li.textContent = `🎵 ${cancionTexto}`;
-                queueList.appendChild(li);
+            if (!match) {
+                console.warn(`❌ No se encontró la canción: ${titulo}`);
+                continue;
             }
+
+            playlistQueue.push({
+                url: `/api/proxy-cloudinary/${encodeURIComponent(match.public_id)}`,
+                title: cancionTexto
+            });
+
+            const li = document.createElement('li');
+            li.textContent = `🎵 ${cancionTexto}`;
+            queueList.appendChild(li);
         }
 
-        console.log(`✅ Se cargaron ${playlistQueue.length} canciones en la cola.`);
-
+        console.log(`✅ Se cargaron ${playlistQueue.length} canciones para la hora ${horaBogota}:00`);
     } catch (err) {
-        console.error("❌ Error al cargar la programación:", err);
+        console.error("❌ Error al cargar la programación de la hora actual:", err);
     }
 }
 
@@ -358,6 +428,39 @@ playBtn.addEventListener('click', async () => {
         console.error("Error al reproducir audioPlayer:", err);
     });
 });
+
+async function initMicList() {
+    await navigator.mediaDevices.getUserMedia({audio: true});
+    await refreshMicList();
+    navigator.mediaDevices.addEventListener('devicechange', refreshMicList);
+}
+
+async function refreshMicList() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const mics = devices.filter(d => d.kind === 'audioinput');
+    micSelect.innerHTML = '';
+    mics.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.deviceId;
+        opt.textContent = d.label || `Micrófono ${micSelect.length + 1}`;
+        micSelect.appendChild(opt);
+    });
+}
+
+micSelect.addEventListener('change', async () => {
+    if (!micStream) return;
+    micStream.getTracks().forEach(t => t.stop());
+
+    const deviceId = micSelect.value;
+    micStream = await navigator.mediaDevices.getUserMedia({
+        audio: {deviceId: {exact: deviceId}}
+    });
+
+    const newSource = audioContext.createMediaStreamSource(micStream);
+    newSource.connect(destination);
+    newSource.connect(audioContext.destination);
+});
+
 document.getElementById('muteMicBtn').addEventListener('click', () => {
     if (!micStream) return;
     micMuted = !micMuted;
@@ -367,4 +470,18 @@ document.getElementById('muteMicBtn').addEventListener('click', () => {
     btn.textContent = micMuted ? "🔇 Micrófono Muted" : "🎤 Silenciar Mic";
     btn.style.background = micMuted ? "#faa" : "";
 });
+async function eliminarCancionBD(textoCompleto, horaBogota) {
+    try {
+        await fetch("/api/programacion/cancion", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ hora: horaBogota, cancion: textoCompleto })
+        });
+        console.log(`🗑️ Eliminada de la hora ${horaBogota}: ${textoCompleto}`);
+    } catch (err) {
+        console.error("❌ No se pudo borrar en la BD:", err);
+    }
+}
+
 loadCategories();
+initMicList()

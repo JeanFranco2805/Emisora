@@ -1,4 +1,7 @@
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import requests
 from flask import Blueprint, session
 import cloudinary
@@ -50,6 +53,42 @@ def login():
             return jsonify({'mensaje': 'Login exitoso', 'redirect': '/'})
 
     return jsonify({'mensaje': 'Credenciales incorrectas'}), 401
+
+
+@api.route("/programacion/cancion", methods=["DELETE"])
+def eliminar_cancion_programada():
+    data = request.get_json()
+    hora = int(data.get("hora"))
+    cancion_a_eliminar = data.get("cancion")
+
+    if hora is None or not cancion_a_eliminar:
+        return jsonify({"error": "Datos incompletos"}), 400
+
+    programacion = Programacion.query.filter_by(hora=hora).first()
+    if not programacion:
+        return jsonify({"error": "No hay programación para esa hora"}), 404
+    try:
+        canciones = json.loads(programacion.canciones)
+        if cancion_a_eliminar in canciones:
+            canciones.remove(cancion_a_eliminar)
+            programacion.canciones = json.dumps(canciones)
+            db.session.commit()
+            return jsonify({"ok": True, "eliminada": cancion_a_eliminar}), 200
+        else:
+            return jsonify({"error": "Canción no encontrada en la lista"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/programacion-actual')
+def programacion_actual():
+    hora_bogota = datetime.now(ZoneInfo("America/Bogota")).hour  # 0‑23
+
+    bloque = Programacion.query.filter_by(hora=hora_bogota).first()
+    if not bloque:
+        return jsonify({"hora": hora_bogota, "songs": []})
+
+    canciones = json.loads(bloque.canciones)
+    return jsonify({"hora": hora_bogota, "songs": canciones})
 
 
 @api.route('/logout')

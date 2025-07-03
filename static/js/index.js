@@ -33,11 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                             const imageSrc = `/static/images/${folder.toLowerCase()}.jpg`;
 
-                            card.innerHTML = `
-                                <img src="${imageSrc}" alt="${folder}" />
-                                <h2>${folder}</h2>
-                            `;
+                            const defaultImg = '/static/images/salsa.jpg';
+                            const src = imageSrc || defaultImg;
 
+                            card.innerHTML = `
+                              <img src="${src}"
+                                   alt="${folder}"
+                                   onerror="this.onerror=null;this.src='${defaultImg}';">
+                              <h2>${folder}</h2>
+                            `;
                             card.addEventListener("click", () => {
                                 showPlaylistModal(folder, songs);
                             });

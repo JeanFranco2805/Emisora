@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(data.error || "Error al cargar categorías");
 
             for (const folder of data.folders) {
-                // Cargar en category-list
                 fetch(`/api/category-songs/${folder}`)
                     .then(result => result.json())
                     .then(dataSongs => {
