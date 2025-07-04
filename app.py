@@ -45,7 +45,6 @@ def index():
 
 
 @app.route('/en-vivo')
-@login_required
 def onLive():
     return render_template('main/en-vivo.html')
 
