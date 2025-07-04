@@ -281,25 +281,70 @@ categorySelect.addEventListener('change', async () => {
     }
 });
 
-function playNextSongInQueue() {
-    if (playlistQueue.length === 0) {
-        console.log("Cola vacía. No hay más canciones para reproducir.");
-        currentSong = null;
+async function playNextSongInQueue() {
+    if (playlistQueue.length > 0) {
+        const nextSong = playlistQueue.shift();
+        currentSong = nextSong;
+
+        if (queueList.firstChild) queueList.removeChild(queueList.firstChild);
+
+        audioPlayer.src = nextSong.url;
+        await audioPlayer.play().catch(err => console.error("Error:", err));
+        songTitle.textContent = `🎵 ${nextSong.title}`;
         return;
     }
 
-    const nextSong = playlistQueue.shift();
-    currentSong = nextSong;
+    console.log("Cola vacía. Buscando programación siguiente…");
 
-    if (queueList.firstChild) {
-        queueList.removeChild(queueList.firstChild);
+    try {
+        const progRes = await fetch("/api/cargar-programacion");
+        const programacion = await progRes.json();
+
+        const ahora = new Date().toLocaleString("en-US", {
+            timeZone: "America/Bogota",
+            hour: "2-digit",
+            hour12: false
+        });
+        let hora = Number(ahora);
+
+        for (let i = 1; i <= 24; i++) {
+            hora = (hora + 1) % 24;
+            const lista = programacion[hora] || [];
+            if (lista.length === 0) continue;
+
+            console.log(`🎯 Encontradas ${lista.length} canciones en la hora ${hora}:00`);
+
+            const temasRes = await fetch("/api/todos-los-temas");
+            const catalogo = await temasRes.json();
+
+            lista.forEach(texto => {
+                const [title] = texto.split(" - ");
+                const dato = catalogo.find(t => t.title.trim() === title.trim());
+                if (!dato) return;
+
+                playlistQueue.push({
+                    url: `/api/proxy-cloudinary/${encodeURIComponent(dato.public_id)}`,
+                    title: dato.title,
+                    fullText: texto
+                });
+
+                const li = document.createElement("li");
+                li.textContent = `🎵 ${dato.title}`;
+                queueList.appendChild(li);
+            });
+
+            if (playlistQueue.length > 0) {
+                await playNextSongInQueue();
+            }
+            return;
+        }
+
+        console.warn("🔚 No se encontró programación en las próximas 24 h.");
+        songTitle.textContent = "⏹️ No hay más programación";
+
+    } catch (err) {
+        console.error("❌ Error al buscar programación siguiente:", err);
     }
-
-    audioPlayer.src = nextSong.url;
-    audioPlayer.play().catch(err => {
-        console.error("Error reproduciendo canción:", err);
-    });
-    songTitle.textContent = `🎵 ${nextSong.title}`;
 }
 
 

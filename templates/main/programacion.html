@@ -47,9 +47,11 @@
             cursor: grab;
             position: relative;
         }
+
         .cancion-item.dragging {
             opacity: 0.5;
         }
+
         .cancion-delete {
             background: none;
             border: none;
@@ -60,6 +62,7 @@
             opacity: 0.6;
             transition: opacity 0.2s;
         }
+
         .cancion-delete:hover {
             opacity: 1;
         }
@@ -108,6 +111,14 @@
         .droppable.hover {
             border-color: #ff9100;
         }
+
+        .slot-stats {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2e7d32; /* verde */
+            margin-left: 12px;
+        }
+
     </style>
 </head>
 <body>
@@ -126,7 +137,10 @@
     <div class="timeline">
         {% for hora in horas %}
             <div class="hora-slot droppable" data-hora="{{ hora }}">
-                <h3>{{ hora }}:00 - {{ hora + 1 }}:00</h3>
+                <h3>
+                    {{ hora }}:00 ‑ {{ hora + 1 }}:00
+                    <span class="slot-stats" id="stats-{{ hora }}">0 / 60 min</span>
+                </h3>
                 <div class="contenedor-canciones" id="hora-{{ hora }}"></div>
             </div>
         {% endfor %}
@@ -134,13 +148,19 @@
 </div>
 
 <script>
+    function dur(bytes, kbps = 320) {
+        return (bytes * 8) / (kbps * 1000);
+    }
+
     const selector = document.getElementById('categoriaSelector');
     const contenedor = document.getElementById('canciones-disponibles');
 
-    function crearCancionItem(texto) {
+    function crearCancionItem(texto, duracion) {
         const item = document.createElement('div');
         item.className = 'cancion-item';
         item.textContent = texto;
+        item.dataset.duracion = duracion;
+
         const btn = document.createElement('button');
         btn.className = 'cancion-delete';
         btn.innerHTML = `
@@ -157,6 +177,7 @@
             const slot = item.closest('.droppable');
             item.remove();
             guardarProgramacionSlot(slot);
+            actualizarStats(slot);
         });
         item.appendChild(btn);
 
@@ -165,6 +186,7 @@
             item.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', texto);
+            e.dataTransfer.setData('text/duracion', item.dataset.duracion);
         });
         item.addEventListener('dragend', () => {
             item.classList.remove('dragging');
@@ -199,8 +221,11 @@
                 contenedor.innerHTML = "";
                 data.songs.forEach(song => {
                     const texto = `${song.title} - ${song.artist}`;
-                    const item = crearCancionItem(texto);
-                    contenedor.appendChild(item);
+                    const audio = new Audio(song.url);
+                    audio.addEventListener('loadedmetadata', () => {
+                        const item = crearCancionItem(texto, audio.duration);
+                        contenedor.appendChild(item);
+                    });
                 });
             });
     }
@@ -231,18 +256,20 @@
             e.preventDefault();
             slot.classList.remove('hover');
             const data = e.dataTransfer.getData('text/plain');
-
+            const duracion = Number(e.dataTransfer.getData('text/duracion'));
             const existe = Array.from(container.children).some(el => el.textContent.startsWith(data));
             if (!existe) {
-                const nuevo = crearCancionItem(data);
+                const nuevo = crearCancionItem(data, duracion);
                 container.appendChild(nuevo);
             }
-
+            actualizarStats(slot);
             guardarProgramacionSlot(slot);
         });
 
         container.addEventListener('drop', function (e) {
             guardarProgramacionSlot(slot);
+            actualizarStats(slot);
+
         });
         container.addEventListener('dragover', function (e) {
             e.preventDefault();
@@ -264,23 +291,37 @@
             const box = child.getBoundingClientRect();
             const offset = y - box.top - box.height / 2;
             if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
+                return {offset: offset, element: child};
             } else {
                 return closest;
             }
-        }, { offset: -Infinity }).element;
+        }, {offset: -Infinity}).element;
+    }
+
+    function actualizarStats(slot) {
+        const totalSeg = [...slot.querySelectorAll('.cancion-item')]
+            .reduce((acc, el) => acc + Number(el.dataset.duracion || 0), 0);
+
+        const ocupados = Math.round(totalSeg / 60);
+        const libres = Math.max(0, 60 - ocupados);
+
+        const statsEl = slot.querySelector('.slot-stats');
+        if (statsEl) statsEl.textContent = `${ocupados} ocup • ${libres} libre`;
     }
 
     function guardarProgramacionSlot(slot) {
         if (!slot) return;
         const container = slot.querySelector('.contenedor-canciones');
         const canciones = Array.from(container.querySelectorAll('.cancion-item'))
-            .map(el => el.childNodes[0].textContent.trim());
+            .map(el => ({
+                texto: el.childNodes[0].textContent.trim(),
+                duracion: Number(el.dataset.duracion || 0)
+            }));
         const hora = slot.dataset.hora;
         fetch("/api/guardar-programacion", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ hora, canciones })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({hora, canciones})
         })
             .then(res => res.json())
             .then(data => {
@@ -297,10 +338,12 @@
                     const contenedor = document.querySelector(`#hora-${hora}`);
                     if (contenedor) {
                         canciones.forEach(texto => {
-                            const item = crearCancionItem(texto);
+                            const item = crearCancionItem(texto.texto, texto.duracion);
                             contenedor.appendChild(item);
                         });
+                        actualizarStats(contenedor.closest('.hora-slot'));
                     }
+
                 });
             })
             .catch(err => console.error("❌ Error al cargar programación:", err));

@@ -79,6 +79,7 @@ def eliminar_cancion_programada():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @api.route('/programacion-actual')
 def programacion_actual():
     hora_bogota = datetime.now(ZoneInfo("America/Bogota")).hour  # 0‑23
@@ -124,7 +125,6 @@ def upload_file():
     try:
         folder_path = f"music/{genre.strip()}/"
 
-        # Limpia el public_id para que no tenga rutas
         safe_public_id = raw_public_id.strip().split("/")[-1] if raw_public_id else None
 
         upload_result = cloudinary.uploader.upload(
@@ -148,7 +148,7 @@ def get_cloudinary_files():
         result = cloudinary.api.resources(
             type="upload",
             resource_type="video",
-            max_results=50
+            max_results=50,
         )
         files = [
             {
@@ -215,6 +215,12 @@ def guardar_programacion():
 
     if hora is None or canciones is None:
         return jsonify({"error": "Datos incompletos"}), 400
+
+    if not isinstance(canciones, list) or any(
+            not isinstance(c, dict) or 'texto' not in c or 'duracion' not in c for c in canciones
+    ):
+        return jsonify({"error": "Formato de canciones inválido"}), 400
+
     canciones_json = json.dumps(canciones)
     prog = Programacion.query.filter_by(hora=hora).first()
     if prog:
@@ -257,7 +263,6 @@ def get_songs_by_category(category_name):
     try:
         folder = category_name.strip()
         prefix_path = f"music/{folder}/"
-
         result = cloudinary.api.resources(
             type="upload",
             resource_type="video",
@@ -271,16 +276,16 @@ def get_songs_by_category(category_name):
             song_db = Song.query.filter_by(public_id=public_id).first()
             artist_name = song_db.artist if song_db else "Desconocido"
             title = song_db.title if song_db else os.path.basename(public_id)
-
+            duration = res.get("bytes") or (song_db.duration if song_db and song_db.duration else 180)
             songs_data.append({
                 "public_id": public_id,
                 "title": title,
                 "url": res["secure_url"],
                 "type": res["resource_type"],
                 "genre": category_name,
-                "artist": artist_name
+                "artist": artist_name,
+                "bytes": duration
             })
-
         return jsonify({"songs": songs_data})
 
     except Exception as e:
