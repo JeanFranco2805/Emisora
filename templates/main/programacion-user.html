@@ -3,62 +3,61 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🎧 Programación del Día</title>
+    <title>Programación del Día</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/programacion.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/caribe-minimal.css') }}">
 </head>
 <body>
-
 <header class="tropical-header">
-    <h1>🎶 El Gran Sonero Estéreo 🎶</h1>
-    <p>¡Ritmo, sabor y alegría las 24 horas del día! 🌞🌴</p>
+    <h1>Programación del Día</h1>
+    <p>Conoce la parrilla musical de El Gran Sonero Estéreo.</p>
 
     <nav>
         <ul>
-            <li><a href="/programacion">🎧 Programación</a></li>
-            <li><a href="/en-vivo">🔴 En Vivo</a></li>
-            <li><a href="/locutores">🎤 Locutores</a></li>
-            <li><a href="/noticias">📰 Noticias</a></li>
-            <li><a href="/contacto">📬 Contacto</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">En Vivo</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/contacto">Contacto</a></li>
         </ul>
     </nav>
 
     <div class="social-media">
-        <span>🌺 Síguenos:</span>
-        <a href="https://facebook.com" target="_blank">Facebook</a> |
-        <a href="https://instagram.com" target="_blank">Instagram</a> |
+        <span>Síguenos:</span>
+        <a href="https://facebook.com" target="_blank">Facebook</a>
+        <a href="https://instagram.com" target="_blank">Instagram</a>
         <a href="https://twitter.com" target="_blank">X</a>
     </div>
 </header>
 
 <section class="zona-tropical">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9">
-    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9" alt="">
+    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol" alt="">
 </section>
 
 <main class="playlist-container">
-    <button id="toggleSidebar" class="menu-btn">☰</button>
+    <button id="toggleSidebar" class="menu-btn" aria-label="Abrir menú">☰</button>
 
     <div class="sidebar" id="sidebar">
-        <h2>📻 Menú</h2>
+        <h2>Menú</h2>
         <ul>
-            <li><a href="/">🏠 Menú Principal</a></li>
-            <li><a href="/programacion">📅 Programación</a></li>
-            <li><a href="/en-vivo">💬 Chat en Vivo</a></li>
-            <li><a href="/noticias">📰 Noticias</a></li>
-            <li><a href="/locutores">🎙️ Locutores</a></li>
-            <li><a href="/favoritos">❤️ Favoritos</a></li>
+            <li><a href="/">Menú Principal</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">Chat en Vivo</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/favoritos">Favoritos</a></li>
         </ul>
     </div>
-
 
     <section class="timeline">
         {% for hora in horas %}
