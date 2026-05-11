@@ -5,28 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacto - El Gran Sonero Estéreo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/contacto.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/caribe-minimal.css') }}">
 </head>
 <body>
-
 <header class="contacto-header">
-    <h1>📬 Contáctanos</h1>
-    <p>¿Tienes una duda o sugerencia? ¡Escríbenos!</p>
+    <h1>Contáctanos</h1>
+    <p>Envíanos tus dudas, sugerencias o mensajes para la emisora.</p>
 </header>
 
 <section id="contacto" class="seccion">
     <form class="contact-form" action="/enviar-mensaje" method="POST">
-        <label for="nombre">Nombre:</label>
+        <label for="nombre">Nombre</label>
         <input type="text" name="nombre" id="nombre" required>
 
-        <label for="email">Correo:</label>
+        <label for="email">Correo</label>
         <input type="email" name="email" id="email" required>
 
-        <label for="mensaje">Mensaje:</label>
+        <label for="mensaje">Mensaje</label>
         <textarea name="mensaje" id="mensaje" rows="5" required></textarea>
 
-        <button type="submit">Enviar Mensaje</button>
+        <button type="submit">Enviar mensaje</button>
     </form>
 </section>
-
 </body>
 </html>

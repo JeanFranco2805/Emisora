@@ -6,76 +6,73 @@
     <title>Locutores - El Gran Sonero Estéreo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/locutores.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/caribe-minimal.css') }}">
 </head>
 <body>
-
 <header class="tropical-header">
-    <h1>🎶 El Gran Sonero Estéreo 🎶</h1>
-    <p>¡Ritmo, sabor y alegría las 24 horas del día! 🌞🌴</p>
+    <h1>Nuestros Locutores</h1>
+    <p>Las voces que le dan identidad, energía y sabor a la emisora.</p>
 
     <nav>
         <ul>
-            <li><a href="/programacion">🎧 Programación</a></li>
-            <li><a href="/en-vivo">🔴 En Vivo</a></li>
-            <li><a href="/locutores">🎤 Locutores</a></li>
-            <li><a href="/contacto">📬 Contacto</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">En Vivo</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/contacto">Contacto</a></li>
         </ul>
     </nav>
 
     <div class="social-media">
-        <span>🌺 Síguenos:</span>
-        <a href="https://facebook.com" target="_blank">Facebook</a> |
-        <a href="https://instagram.com" target="_blank">Instagram</a> |
+        <span>Síguenos:</span>
+        <a href="https://facebook.com" target="_blank">Facebook</a>
+        <a href="https://instagram.com" target="_blank">Instagram</a>
         <a href="https://twitter.com" target="_blank">X</a>
     </div>
 </header>
 
 <section class="zona-tropical">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9">
-    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9" alt="">
+    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol" alt="">
 </section>
 
 <main class="playlist-container">
-    <button id="toggleSidebar" class="menu-btn">☰</button>
+    <button id="toggleSidebar" class="menu-btn" aria-label="Abrir menú">☰</button>
 
     <div class="sidebar" id="sidebar">
-        <h2>📻 Menú</h2>
+        <h2>Menú</h2>
         <ul>
-            <li><a href="/">🏠 Menú Principal</a></li>
-            <li><a href="/programacion">📅 Programación</a></li>
-            <li><a href="/en-vivo">💬 Chat en Vivo</a></li>
-            <li><a href="/noticias">📰 Noticias</a></li>
-            <li><a href="/locutores">🎙️ Locutores</a></li>
-            <li><a href="/favoritos">❤️ Favoritos</a></li>
+            <li><a href="/">Menú Principal</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">Chat en Vivo</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/favoritos">Favoritos</a></li>
         </ul>
     </div>
 
-
     <section class="locutores-section">
-        <h2>🎤 Nuestros Locutores</h2>
-        <p class="intro">Conoce a las voces que le dan vida a nuestra emisora</p>
+        <h2>Nuestros Locutores</h2>
+        <p class="intro">Conoce a las voces que acompañan a la audiencia todos los días.</p>
 
         <div class="locutores-grid">
             <div class="locutor-card">
-                <img src="{{ url_for('static', filename='images/josef.jpg') }}" alt="Locutor 1">
+                <img src="{{ url_for('static', filename='images/josef.jpg') }}" alt="DJ Josef">
                 <h3>DJ Josef</h3>
-                <p>Con energía y ritmo, Josef anima tus </p>
-                <p>mañanas tropicales de lunes a viernes.</p>
+                <p>Con energía y ritmo, Josef anima tus mañanas tropicales de lunes a viernes.</p>
             </div>
 
             <div class="locutor-card">
-                <img src="{{ url_for('static', filename='images/deivis.png') }}" alt="Locutor 2">
+                <img src="{{ url_for('static', filename='images/deivis.png') }}" alt="DJ Deivis">
                 <h3>DJ Deivis</h3>
-                <p>El sabor del Caribe llega con salsa </p>
-                <p>Verbenera. En vivo todos los fines de semana.</p>
+                <p>El sabor del Caribe llega con salsa verbenera en vivo todos los fines de semana.</p>
             </div>
         </div>
     </section>
