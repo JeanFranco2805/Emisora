@@ -5,70 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Noticias - El Gran Sonero</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/caribe-minimal.css') }}">
 </head>
 <body>
 <header class="tropical-header">
-    <h1>🎶 El Gran Sonero Estéreo 🎶</h1>
-    <p>¡Ritmo, sabor y alegría las 24 horas del día! 🌞🌴</p>
+    <h1>Noticias Musicales</h1>
+    <p>Actualidad, cultura y tendencias de la música tropical.</p>
 
     <nav>
         <ul>
-            <li><a href="/programacion">🎧 Programación</a></li>
-            <li><a href="/en-vivo">🔴 En Vivo</a></li>
-            <li><a href="/locutores">🎤 Locutores</a></li>
-            <li><a href="/contacto">📬 Contacto</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">En Vivo</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/contacto">Contacto</a></li>
         </ul>
     </nav>
 
     <div class="social-media">
-        <span>🌺 Síguenos:</span>
-        <a href="https://facebook.com" target="_blank">Facebook</a> |
-        <a href="https://instagram.com" target="_blank">Instagram</a> |
+        <span>Síguenos:</span>
+        <a href="https://facebook.com" target="_blank">Facebook</a>
+        <a href="https://instagram.com" target="_blank">Instagram</a>
         <a href="https://twitter.com" target="_blank">X</a>
     </div>
 </header>
 
 <section class="zona-tropical">
-    <!-- Nubes y sol -->
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8">
-    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9">
-    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-1" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-2" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-3" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-4" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-5" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-6" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-7" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-8" alt="">
+    <img src="{{ url_for('static', filename='images/nube.png') }}" class="nube nube-9" alt="">
+    <img src="{{ url_for('static', filename='images/sol.png') }}" class="sol" alt="">
 </section>
 
 <main class="playlist-container">
-    <button id="toggleSidebar" class="menu-btn">☰</button>
+    <button id="toggleSidebar" class="menu-btn" aria-label="Abrir menú">☰</button>
 
     <div class="sidebar" id="sidebar">
-        <h2>📻 Menú</h2>
+        <h2>Menú</h2>
         <ul>
-            <li><a href="/">🏠 Menú Principal</a></li>
-            <li><a href="/programacion">📅 Programación</a></li>
-            <li><a href="/en-vivo">💬 Chat en Vivo</a></li>
-            <li><a href="/noticias">📰 Noticias</a></li>
-            <li><a href="/locutores">🎙️ Locutores</a></li>
-            <li><a href="/favoritos">❤️ Favoritos</a></li>
+            <li><a href="/">Menú Principal</a></li>
+            <li><a href="/programacion">Programación</a></li>
+            <li><a href="/en-vivo">Chat en Vivo</a></li>
+            <li><a href="/noticias">Noticias</a></li>
+            <li><a href="/locutores">Locutores</a></li>
+            <li><a href="/favoritos">Favoritos</a></li>
         </ul>
     </div>
 
-
     <section class="noticias">
-        <h2>📰 Noticias Musicales</h2>
+        <h2>Noticias Musicales</h2>
 
         <div class="noticia">
-            <h3>🎤 Vuelve Juan Luis Guerra con gira por América Latina</h3>
-            <p>El legendario artista tropical anuncia una serie de conciertos en 8 países. ¡No te lo pierdas!</p>
+            <h3>Vuelve Juan Luis Guerra con gira por América Latina</h3>
+            <p>El legendario artista tropical anuncia una serie de conciertos en 8 países. No te lo pierdas.</p>
             <span class="fecha">Publicado el 29 de junio de 2025</span>
         </div>
 
         <div class="noticia">
-            <h3>🔥 Salsa y Reggaetón dominan el top 10 esta semana</h3>
+            <h3>Salsa y Reggaetón dominan el top 10 esta semana</h3>
             <p>Explora el ranking con los artistas más escuchados por nuestros oyentes esta semana.</p>
             <span class="fecha">Publicado el 28 de junio de 2025</span>
         </div>
